@@ -23,7 +23,8 @@ export const ProductSliceshow: FC<Props> = ({ images }) => {
                     <div className={ styles['each-slide-effect'] } key={ image } >
                         <div style={{
                                 backgroundImage: `url(${ url })`,
-                                backgroundSize: 'cover'
+                                backgroundSize: 'cover',
+                                height: '500px'
                             }}
                         >
 

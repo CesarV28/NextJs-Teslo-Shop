@@ -17,7 +17,7 @@ const EmptyPage = () => {
                 <Typography>Your cart is empty  </Typography>
                 <NextLink href='/' passHref legacyBehavior >
                     <Link typography="h4" color="secondary" >
-                        Let's buy
+                        Lets&apos; buy
                     </Link>
                 </NextLink>
            </Box>

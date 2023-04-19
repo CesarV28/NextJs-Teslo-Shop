@@ -1,9 +1,27 @@
+import { useContext, useState } from 'react';
+import { useRouter } from 'next/router';
 import NextLink from 'next/link';
-import { AppBar, Badge, Box, Button, IconButton, Link, Toolbar, Typography } from '@mui/material';
-import { SearchOutlined, ShoppingBagOutlined, ShoppingCartOutlined } from '@mui/icons-material';
+import { AppBar, Badge, Box, Button, IconButton, Input, InputAdornment, Link, Toolbar, Typography } from '@mui/material';
+import { ClearOutlined, SearchOutlined, ShoppingBagOutlined, ShoppingCartOutlined } from '@mui/icons-material';
+
+import { UIContext } from '@/context';
 
 
 export const Navbar = () => {
+
+  const { asPath, push } = useRouter(); 
+
+  const { toggleSideMenu } = useContext( UIContext );
+
+  const [searchTerm, setsearchTerm] = useState('');
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+
+  const onSearchTerm = () => {
+    if( searchTerm.trim().length === 0 ) return;
+    push( `/search/${ searchTerm }` );
+  }
+
+
   return (
     <AppBar>
         <Toolbar>
@@ -16,10 +34,10 @@ export const Navbar = () => {
 
         <Box flex={ 1 }/>
 
-        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+        <Box sx={{ display: isSearchVisible ? 'none' : { xs: 'none', sm: 'block' } }}>
             <NextLink href="/category/men" passHref legacyBehavior>
                 <Link>
-                    <Button>
+                    <Button color={ asPath === '/category/men' ? 'primary' : 'info' } >
                         Hombres
                     </Button>
                 </Link>
@@ -27,16 +45,16 @@ export const Navbar = () => {
 
             <NextLink href="/category/women" passHref legacyBehavior>
                 <Link>
-                    <Button>
+                    <Button color={ asPath === '/category/women' ? 'primary' : 'info' } >
                         Mujeres
                     </Button>
                 </Link>
             </NextLink>
 
-            <NextLink href="/category/kids" passHref legacyBehavior>
+            <NextLink href="/category/kid" passHref legacyBehavior>
                 <Link>
-                    <Button>
-                        Kids
+                    <Button color={ asPath === '/category/kid' ? 'primary' : 'info' } >
+                        Niños
                     </Button>
                 </Link>
             </NextLink>
@@ -44,7 +62,48 @@ export const Navbar = () => {
 
         <Box flex={ 1 }/>
 
-        <IconButton>
+        
+
+        {
+            isSearchVisible 
+            ? (
+                <Input
+                    autoFocus 
+                    sx={{ display: { xs: 'none', sm: 'flex' } }}
+                    className="fadeIn"    
+                    value={ searchTerm }
+                    onChange={ (e) => setsearchTerm( e.target.value ) }
+                    onKeyPress={ (e) => e.key === 'Enter' ? onSearchTerm() : null }
+                    type='text'
+                    placeholder="Buscar..."
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                                onClick={ () => setIsSearchVisible(false) }
+                            >
+                                <ClearOutlined />
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                />
+              )
+            : (
+                <IconButton
+                    className="fadeIn"
+                    sx={{ display: { xs: 'none', sm: 'flex' }}}
+                    onClick={ () => setIsSearchVisible(true) }
+                >    
+                    <SearchOutlined/>
+                </IconButton>
+             )
+        }
+
+        
+
+        <IconButton
+            sx={{ display: { xs: 'flex', sm: 'none' }}}
+            onClick={ toggleSideMenu }
+        >
             <SearchOutlined/>
         </IconButton>
 
@@ -58,7 +117,7 @@ export const Navbar = () => {
             </Link>
         </NextLink>
 
-        <Button>
+        <Button onClick={ toggleSideMenu } >
             Menu
         </Button>
 
