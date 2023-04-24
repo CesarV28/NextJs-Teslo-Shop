@@ -1,8 +1,13 @@
 import { CartList, OrderSummary } from '@/components/cart'
 import { ShopLayout } from '@/components/layouts'
+import { CartContext } from '@/context'
 import { Box, Button, Card, CardContent, Divider, Grid, Typography } from '@mui/material'
+import { useContext } from 'react'
 
 const CartPage = () => {
+
+  const { cart } = useContext(CartContext);
+
   return (
     <ShopLayout title='Cart - 3' pageDescription='Cart list' >
         <Typography variant="h1" component="h1" sx={{ mb: 5 }} >Carrito</Typography>
@@ -15,7 +20,7 @@ const CartPage = () => {
             <Grid item xs={ 12 } sm={ 5 }  >
                 <Card className="summary-card">
                     <CardContent>
-                        <Typography variant="h2" >Resumen (3 productos)</Typography>
+                        <Typography variant="h2" >Resumen ({`${cart.length}` || 0} {`${cart.length > 1 ? 'productos' : 'producto'}`} {`en tu carrito`})</Typography>
                         <Divider sx={{ my: 1 }} />
                         
                         <OrderSummary/>

@@ -1,5 +1,6 @@
+import { useContext, useState } from "react";
 import { NextPage, GetStaticPaths, GetStaticProps } from "next";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Chip, Grid, Typography } from "@mui/material";
 
 import { ShopLayout } from "@/components/layouts";
 import { ProductSliceshow, SizeSelector } from "@/components/products";
@@ -7,7 +8,10 @@ import { ItemCounter } from "@/components/ui";
 
 import { dbProducts } from "@/database";
 
-import { IProduct } from "@/interfaces";
+import { ICartProduct, IProduct, ISize } from "@/interfaces";
+import { useRouter } from "next/router";
+import { CartContext } from "@/context";
+
 
 
 
@@ -20,9 +24,46 @@ interface Props {
 
 const ProductPage: NextPage<Props> = ({ product }) => {
 
-  // const router = useRouter();
-  // const { products: product, isLoading } = useProducts(`/products/${ router.query.slug }`);
-  // if( isLoading ) return <h1>Cargando</h1>;
+  const router = useRouter();
+  const { addProductToCart } = useContext(CartContext);
+
+  const [temCartProduct, setTemCartProduct] = useState<ICartProduct>({
+    _id: product._id,
+    image: product.images[0],
+    price: product.price,
+    size: undefined,
+    slug: product.slug,
+    title: product.title,
+    gender: product.gender,
+    quantity: 1,
+  });
+
+  const selectedSize = ( size: ISize ) => {
+    setTemCartProduct( (currentProduct: ICartProduct ) => ({
+      ...currentProduct,
+      size
+    }));
+  }
+
+  const updateQuantity = ( quantity: number ) => {
+    setTemCartProduct( (currentProduct: ICartProduct ) => ({
+      ...currentProduct,
+      quantity
+    }));
+  }
+
+  const onAddProduct = () => {
+
+    if( temCartProduct.quantity === 0 || !temCartProduct.size ) {
+      return;
+    }
+
+    // TODO: call action context to add product to cart
+    addProductToCart( temCartProduct );
+    
+
+    router.push('/cart');
+  }
 
   return (
     <ShopLayout title={ product.title } pageDescription={ product.description } >
@@ -41,19 +82,42 @@ const ProductPage: NextPage<Props> = ({ product }) => {
             <Box sx={{ my: 2 }} >
               <Typography variant="subtitle2" >Cantidad</Typography>
               {/* Item counter */}
-              <ItemCounter/>
+              <ItemCounter
+                currentValue={ temCartProduct.quantity }
+                updateQuantity={ updateQuantity }
+                maxValue={ product.inStock }
+              />
               <SizeSelector 
                 // selectedSize={ product.sizes[0] } 
                 sizes={ product.sizes }
+                selectedSize={ temCartProduct.size }
+                onSelectedSize={ selectedSize }
               />
             </Box>
 
-            {/* Agregar al carrito */}
-            <Button color="secondary" className="circular-btn" >
-              Agregar al carrito
-            </Button>
+            {
+              ( product.inStock > 0 ) 
+              ? (
+                  <Button 
+                    color="secondary" 
+                    className="circular-btn" 
+                    onClick={ onAddProduct }
+                    disabled={ (temCartProduct.quantity === 0 || !temCartProduct.size )  }
+                  >
+                    {
+                      temCartProduct.size
+                      ? 'Agregar al carrito'
+                      : 'Seleccione una talla'
+                    }
+                  </Button>
+                )
+              : (
+                  <Chip label="No hay disponibles" color="error" variant="outlined" />
+                )
+            }
+            
 
-            {/* <Chip label="No hay disponibles" color="error" variant="outlined" /> */}
+            
 
             <Box sx={{ mt: 2 }} >
               <Typography variant="subtitle2" >Descripcion</Typography>

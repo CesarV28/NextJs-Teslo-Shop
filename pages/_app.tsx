@@ -5,9 +5,10 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 
 import { lightTheme } from '@/themes';
 
+import { CartProvider, UIProvider } from '@/context';
 
 import '@/styles/globals.css'
-import { UIProvider } from '@/context';
+
 // import '@fontsource/roboto/300.css';
 // import '@fontsource/roboto/400.css';
 // import '@fontsource/roboto/500.css';
@@ -26,12 +27,14 @@ export default function App({ Component, pageProps }: AppProps) {
         fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
       }}
     >
-      <UIProvider>
-        <ThemeProvider theme={ lightTheme}>
-          <CssBaseline/>
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </UIProvider>
+      <CartProvider>
+        <UIProvider>
+          <ThemeProvider theme={ lightTheme}>
+            <CssBaseline/>
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </UIProvider>
+      </CartProvider>
     </SWRConfig>
     
   )

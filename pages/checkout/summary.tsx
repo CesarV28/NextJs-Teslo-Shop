@@ -5,6 +5,7 @@ import { Box, Button, Card, CardContent, Divider, Grid, Link, Typography } from 
 
 
 const SummaryPage = () => {
+
   return (
     <ShopLayout title='Resume order' pageDescription='Resume order' >
         <Typography variant="h1" component="h1" sx={{ mb: 5 }} >Resumen de la orden</Typography>
